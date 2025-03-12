@@ -1,6 +1,9 @@
 def call() {
     pipeline {
         agent any
+        environment {
+        EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'  // ID de credenciales en Jenkins
+    }
         
         stages {
             stage('Checkout') {
@@ -21,7 +24,6 @@ def call() {
                     }
                 }
             }
-            
             stage('Detectar archivos modificados') {
                 steps {
                     script {
@@ -44,6 +46,23 @@ def call() {
                         } else {
                             echo "No se detectaron cambios en archivos."
                         }
+                    }
+                }
+            }
+            stage('Conectar a EC2 y obtener IP privada') {
+            steps {
+                script {
+                    sshagent([EC2_CREDENTIALS_ID]) {
+                        sh """
+                        ssh ubuntu@${EC2_PUBLIC_IP} << 'EOF'
+                        echo "Obteniendo la IP privada..."
+                            curl -s http://169.254.169.254/latest/meta-data/local-ipv4
+                            echo "Listando archivos en /home/forge..."
+                            cd /home/forge && ls -la
+                        EOF
+                        """
+                        }
+                    
                     }
                 }
             }
