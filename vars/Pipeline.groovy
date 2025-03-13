@@ -53,9 +53,9 @@ def call() {
                 steps {
                     script {
                         def scannerHome = tool 'sonarscanner'
-
+                    try{
                         echo " varaible ${scannerHome}"
-                        withSonarQubeEnv() {
+                        withSonarQubeEnv(sonarscanner) {
                         
                             sh """
                             ${scannerHome}/bin/sonar-scanner \
@@ -65,6 +65,10 @@ def call() {
                             """
                         
                         }
+                    } catch (Exception e) {
+                        echo "Se encontró error. Revisa antes de continuar."
+                        error("Pipeline detenido por exposición de credenciales.")
+                    }
                     }
                 }
             }
