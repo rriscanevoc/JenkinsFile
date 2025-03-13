@@ -49,7 +49,25 @@ def call() {
                     }
                 }
             }
-            stage('Despliegue') {
+            stage('SonarQube Analysis') {
+                steps {
+                    script {
+                        def scannerHome = tool 'SonarScanner'
+                    
+                        withSonarQubeEnv() {
+                        
+                            sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectKey=famiefi-api-utils \
+                                -Dsonar.host.url=http://35.94.233.94:9002/ \
+                                -Dsonar.login=squ_a9df8357e5e6cc2195201e044365229a7d7ce612
+                            """
+                        
+                        }
+                    }
+                }
+            }
+            stage('Conexión') {
                 steps {
                     script {
                         withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
@@ -78,6 +96,24 @@ def call() {
                 }
                 
             }
+            /*stage('Despliegue') {
+                steps {
+                    script {
+                        withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
+                           sshagent([env.EC2_CREDENTIALS_ID]) {
+                                sh """
+                                ssh forge@${publicIp} \
+                                "set -e; \
+                                cd /home/forge/calidad-v1-diggi-utils \
+                                git pull origin ${env.BRANCH_NAME}\
+                                cd /home/forge/calidad-v1-diggi-utils"
+                                """
+                            }
+                        }
+                    }
+                }
+                
+            }*/
         }
         post {
             success {
