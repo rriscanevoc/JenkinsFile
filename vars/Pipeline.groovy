@@ -68,7 +68,7 @@ def call() {
                             ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=famiefi-api-utils \
                                 -Dsonar.host.url=http://35.94.233.94:9002/ \
-                                -Dsonar.login=squ_a9df8357e5e6cc2195201e044365229a7d7ce612
+                                -Dsonar.login=sqp_f425e7a673e249da66d856799b576a7dca6afccb
                             """
                         
                         }
