@@ -55,13 +55,13 @@ def call() {
                     try{
 
                         def scannerHome = tool 'sonarscanner'
+                        echo " varaible ${scannerHome}"
                     } catch (Exception e) {
                         echo "Se encontró error en instalación"
                         error("Pipeline detenido .")
                     }
 
                     try{
-                        echo " varaible ${scannerHome}"
                         withSonarQubeEnv(sonarscanner) {
                         
                             sh """
