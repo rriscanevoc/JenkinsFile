@@ -3,7 +3,7 @@ def call() {
         agent any
         environment {
         EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'  // ID de credenciales en Jenkins
-    }
+        }
         
         stages {
             stage('Checkout') {
@@ -49,26 +49,43 @@ def call() {
                     }
                 }
             }
-            stage('Conectar a EC2 y obtener IP privada') {
-            steps {
-                script {
-                    sshagent([EC2_CREDENTIALS_ID]) {
-                        sh """
-                        ssh ubuntu@${EC2_PUBLIC_IP} << 'EOF'
-                        echo "Obteniendo la IP privada..."
-                            curl -s http://169.254.169.254/latest/meta-data/local-ipv4
-                            echo "Listando archivos en /home/forge..."
-                            cd /home/forge && ls -la
-                        EOF
-                        """
+            stage('Despliegue') {
+                steps {
+                    script {
+                        withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
+                            def publicIp = sh(
+                                script: """
+                                aws ec2 describe-instances --region ${env.AWS_REGION} \
+                                --instance-ids ${INSTANCE_ID} \
+                                --query "Reservations[].Instances[].PublicIpAddress" \
+                                --output text 
+                                """,
+                                returnStdout: true
+                            ).trim()
+
+                            sshagent([env.EC2_CREDENTIALS_ID]) {
+                                sh """
+                                ssh ubuntu@${publicIp} \
+                                "set -e; \
+                                echo "Obteniendo la IP privada..."; \
+                                curl -s http://169.254.169.254/latest/meta-data/local-ipv4; \
+                                echo "Listando archivos en /home/forge..."; \
+                                cd /home/forge && ls -la"
+                                """
+                            }
                         }
-                    
                     }
                 }
+                
             }
         }
-        
         post {
+            success {
+                echo " Despliegue completado exitosamente"
+            }
+            failure {
+                echo " El despliegue falló"
+            }   
             always {
                 cleanWs()
             }
