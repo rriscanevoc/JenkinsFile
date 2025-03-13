@@ -53,7 +53,8 @@ def call() {
                 steps {
                     script {
                         def scannerHome = tool 'sonarscanner'
-                    
+
+                        echo " varaible ${scannerHome}"
                         withSonarQubeEnv() {
                         
                             sh """
