@@ -52,7 +52,15 @@ def call() {
             stage('SonarQube Analysis') {
                 steps {
                     script {
+                    try{
+
                         def scannerHome = tool 'sonarscanner'
+                    } catch (Exception e) {
+                        echo "Se encontró error en instalación"
+                        error("Pipeline detenido .")
+                    }
+                    }
+
                     try{
                         echo " varaible ${scannerHome}"
                         withSonarQubeEnv(sonarscanner) {
