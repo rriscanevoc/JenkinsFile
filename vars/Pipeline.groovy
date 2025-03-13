@@ -52,7 +52,7 @@ def call() {
             stage('SonarQube Analysis') {
                 steps {
                     script {
-                        def scannerHome = tool 'SonarScanner'
+                        def scannerHome = tool 'sonarscanner'
                     
                         withSonarQubeEnv() {
                         
