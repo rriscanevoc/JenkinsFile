@@ -62,7 +62,7 @@ def call() {
                     }
 
                     try{
-                        withSonarQubeEnv(sonarscanner) {
+                        withSonarQubeEnv() {
                         
                             sh """
                             ${scannerHome}/bin/sonar-scanner \
