@@ -59,7 +59,6 @@ def call() {
                         echo "Se encontró error en instalación"
                         error("Pipeline detenido .")
                     }
-                    }
 
                     try{
                         echo " varaible ${scannerHome}"
