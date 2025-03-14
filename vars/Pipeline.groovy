@@ -82,7 +82,7 @@ def call() {
                                 -Dsonar.sources=app/ \
                                 -Dsonar.working.directory=.scannerwork \
                                 -X 
-                        */    """
+                           """*/
                         
 //                        }
                     } catch (Exception e) {
