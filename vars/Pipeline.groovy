@@ -69,7 +69,12 @@ def call() {
 
                     try{
 //                        withSonarQubeEnv('sonarqube') {
-                            sh """
+                              sh """
+                                    echo "scannerHome: ${scannerHome}"
+                                    echo "Esperado: -/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner-"
+                                """
+
+                        /*    sh """
                             /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner/bin/sonar-scanner \
                                 -Dsonar.projectKey=famiefi-api-utils \
                                 -Dsonar.host.url=http://44.247.49.190:9002 \
@@ -77,7 +82,7 @@ def call() {
                                 -Dsonar.sources=app/ \
                                 -Dsonar.working.directory=.scannerwork \
                                 -X 
-                            """
+                        */    """
                         
 //                        }
                     } catch (Exception e) {
