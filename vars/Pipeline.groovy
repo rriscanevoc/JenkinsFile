@@ -70,8 +70,8 @@ def call() {
                         try{
 //                        withSonarQubeEnv('sonarqube') {
                             sh """
-                                echo "${scannerHome}"
-                                echo "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner"
+                                cd ${scannerHome}/bin/sonar-scanner
+                                pwd
                             """
 
                         /*    sh """
