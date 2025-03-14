@@ -147,9 +147,9 @@ def call() {
             failure {
                 echo " El despliegue falló"
             }   
-            always {
+            /*always {
                 //cleanWs()
-            }
+            }*/
         }
     }
 }
