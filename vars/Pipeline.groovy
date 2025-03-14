@@ -28,6 +28,7 @@ def call() {
                 steps {
                     script {
                         echo "🔍 Detectando cambios en el repositorio..."
+                        echo " ID PR : ${env.CHANGE_ID}"
                         echo "🌿 Rama actual: ${env.BRANCH_NAME}"
                         echo "📌 Rama origen (PR): ${env.CHANGE_BRANCH}"
                         echo "🎯 Rama destino (PR): ${env.CHANGE_TARGET}"
