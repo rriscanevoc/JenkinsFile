@@ -73,8 +73,7 @@ def call() {
                     }
 
                     try{
-                        withSonarQubeEnv('sonarqube') {
-                            
+//                        withSonarQubeEnv('sonarqube') {
                             sh """
                             ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=famiefi-api-utils \
@@ -85,7 +84,7 @@ def call() {
                                 -X
                             """
                         
-                        }
+//                        }
                     } catch (Exception e) {
                         echo "Se encontró error. Revisa antes de continuar."
                         error("Pipeline detenido por exposición de credenciales.")
