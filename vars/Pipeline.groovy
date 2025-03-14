@@ -66,7 +66,6 @@ def call() {
                     
                         def scannerHome = tool 'sonarscanner'
                         echo " varaible ${scannerHome}"
-                        echo " token  ${Sonar}"
 
                     } catch (Exception e) {
                         echo "Se encontró error en instalación"
