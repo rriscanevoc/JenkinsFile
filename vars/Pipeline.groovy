@@ -65,9 +65,9 @@ def call() {
                         withSonarQubeEnv() {
                         
                             sh """
-                            ${scannerHome}/bin/sonar-scanner \
-                                -Dsonar.projectKey=famiefi-api-utils \
-                                -Dsonar.host.url=http://35.94.233.94:9002/ \
+                            ${scannerHome}/bin/sonar-scanner 
+                                -Dsonar.projectKey=famiefi-api-utils 
+                                -Dsonar.host.url=http://35.94.233.94:9002/ 
                                 -Dsonar.login=sqp_f425e7a673e249da66d856799b576a7dca6afccb
                             """
                         
