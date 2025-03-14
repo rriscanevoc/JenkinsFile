@@ -70,8 +70,7 @@ def call() {
                         try{
 //                        withSonarQubeEnv('sonarqube') {
                             sh """
-                                cd ${scannerHome}/bin/sonar-scanner
-                                pwd
+                                ls ${scannerHome}/bin/sonar-scanner
                             """
 
                         /*    sh """
