@@ -70,8 +70,8 @@ def call() {
                         try{
 //                        withSonarQubeEnv('sonarqube') {
                             sh """
-                                echo "scannerHome: ${scannerHome}" \
-                                echo "Esperado: -/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner-"
+                                echo "${scannerHome}"
+                                echo "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner"
                             """
 
                         /*    sh """
