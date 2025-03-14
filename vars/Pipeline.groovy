@@ -49,14 +49,25 @@ def call() {
                     }
                 }
             }
+            stage('Imprimir') {
+                steps {
+                    script {
+                        withCredentials([string(credentialsId: 'Sonar', variable: 'sonartoken')]) {
+                            echo "Token ${sonartoken}∫"
+                        }
+                    }
+                }
+            }
+
             stage('SonarQube Analysis') {
                 steps {
                     script {
                     try{
-
+                    
                         def scannerHome = tool 'sonarscanner'
                         echo " varaible ${scannerHome}"
                         echo " token  ${Sonar}"
+
                     } catch (Exception e) {
                         echo "Se encontró error en instalación"
                         error("Pipeline detenido .")
