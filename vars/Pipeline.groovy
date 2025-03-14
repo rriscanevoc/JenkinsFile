@@ -62,15 +62,10 @@ def call() {
             stage('SonarQube Analysis') {
                 steps {
                     script {
-                    try{
                     
                         def scannerHome = tool 'sonarscanner'
-                        echo " varaible ${scannerHome}"
-
-                    } catch (Exception e) {
-                        echo "Se encontró error en instalación"
-                        error("Pipeline detenido .")
-                    }
+                        echo "-${scannerHome}-"
+                        echo "-/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner-"
 
                     try{
 //                        withSonarQubeEnv('sonarqube') {
