@@ -80,8 +80,9 @@ def call() {
                                 -Dsonar.host.url=http://44.247.49.190:9002 \
                                 -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb \
                                 -Dsonar.sources=app/ \
-                                -Dsonar.working.directory=.scannerwork 
-                                -X
+                                -Dsonar.working.directory=.scannerwork \
+                                -X \
+                                > sonar.log 2>&1
                             """
                         
 //                        }
@@ -92,6 +93,13 @@ def call() {
                     }
                 }
             }
+
+            stage('Archive Logs') {
+            steps {
+                archiveArtifacts artifacts: 'sonar.log', fingerprint: true
+            }
+            }
+            
             stage('Conexión') {
                 steps {
                     script {
