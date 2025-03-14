@@ -56,6 +56,7 @@ def call() {
 
                         def scannerHome = tool 'sonarscanner'
                         echo " varaible ${scannerHome}"
+                        echo " token  ${env.Sonar}"
                     } catch (Exception e) {
                         echo "Se encontró error en instalación"
                         error("Pipeline detenido .")
@@ -63,10 +64,12 @@ def call() {
 
                     try{
                         withSonarQubeEnv('sonarqube') {
-                        
+                            
                             sh """
-                            ${scannerHome}/bin/sonar-scanner 
-                                -Dsonar.projectKey=famiefi-api-utils 
+                            ${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectKey=famiefi-api-utils \
+                                -Dsonar.host.url=http://44.247.49.190:9002/ \
+                                -Dsonar.login=${env.Sonar}
                             """
                         
                         }
