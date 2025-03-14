@@ -80,6 +80,7 @@ def call() {
                                 -Dsonar.projectKey=famiefi-api-utils \
                                 -Dsonar.host.url=http://44.247.49.190:9002/ \
                                 -Dsonar.login=${env.Sonar} \
+                                -Dsonar.sources=app/
                                 -X
                             """
                         
