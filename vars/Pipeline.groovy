@@ -91,24 +91,25 @@ def call() {
                     script {
                         withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
                             def publicIp = sh(
-                                script: """
-                                aws ec2 describe-instances --region ${env.AWS_REGION} \
-                                --instance-ids ${INSTANCE_ID} \
+                                script: '''
+                                aws ec2 describe-instances --region $AWS_REGION \
+                                --instance-ids $INSTANCE_ID \
                                 --query "Reservations[].Instances[].PublicIpAddress" \
                                 --output text 
-                                """,
+                                ''',
                                 returnStdout: true
                             ).trim()
+                            env.PUBLIC_IP = publicIp
 
                             sshagent([env.EC2_CREDENTIALS_ID]) {
-                                sh """
-                                ssh forge@${publicIp} \
+                                sh '''
+                                ssh forge@$PUBLIC_IP \
                                 "set -e; \
                                 echo "Obteniendo la IP privada..."; \
                                 curl -s http://169.254.169.254/latest/meta-data/local-ipv4; \
                                 echo "Listando archivos en /home/forge..."; \
                                 cd /home/forge && ls -la"
-                                """
+                                '''
                             }
                         }
                     }

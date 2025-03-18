@@ -1,6 +1,10 @@
 def call() {
     pipeline {
         agent any
+
+        environment {
+            SONAR_TOKEN = credentials('Sonar')
+        }
         
         stages {
             stage('Checkout') {
@@ -58,7 +62,7 @@ def call() {
                         try{
 //                        withSonarQubeEnv('sonarqube') {
                             sh """
-                              ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=famiefi-api-utils -Dsonar.token=sqa_011c98b2d3e30a6fd3f8cd6b48df0cd6c907c805 -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork -X
+                              ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=famiefi-api-utils -Dsonar.token=${SONAR_TOKEN} -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork -X
                             """
 
                         /*    sh """
