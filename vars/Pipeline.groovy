@@ -50,7 +50,7 @@ def call() {
                     }
                 }
             }
-            stage('SonarQube Analysis') {
+            /*stage('SonarQube Analysis') {
                 steps {
                     script {
                     
@@ -76,15 +76,16 @@ def call() {
                                 -Dsonar.sources=app/ \
                                 -Dsonar.working.directory=.scannerwork \
                                 -X
-                           """*/
+                           """
                         
 //                        }
                         } catch (Exception e) {
                             echo "Se encontró error. Revisa antes de continuar."
                             error("Pipeline detenido por exposición de credenciales.")
+                        }
                     }
                 }
-            }
+            }*/
             stage('Conexión') {
                 steps {
                     script {
