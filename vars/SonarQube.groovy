@@ -1,9 +1,6 @@
 def call() {
     pipeline {
         agent any
-        environment {
-        EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'  // ID de credenciales en Jenkins
-        }
         
         stages {
             stage('Checkout') {
@@ -56,7 +53,7 @@ def call() {
                     
                         def scannerHome = tool 'sonarscanner'
                         echo "-${scannerHome}-"
-                        echo "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonar-scanner"
+                        echo "-/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner-"
 
                         try{
 //                        withSonarQubeEnv('sonarqube') {
@@ -64,7 +61,8 @@ def call() {
                               ${scannerHome}/bin/sonar-scanner \ 
                               -Dsonar.projectKey=famiefi-api-utils \
                               -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb \
-                              -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork \
+                              -Dsonar.sources=app/ \
+                              -Dsonar.working.directory=.scannerwork \
                               -X
                             """
 
@@ -83,55 +81,13 @@ def call() {
                             echo "Se encontró error. Revisa antes de continuar."
                             error("Pipeline detenido por exposición de credenciales.")
                     }
-                }
-            }
-            stage('Conexión') {
-                steps {
-                    script {
-                        withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
-                            def publicIp = sh(
-                                script: """
-                                aws ec2 describe-instances --region ${env.AWS_REGION} \
-                                --instance-ids ${INSTANCE_ID} \
-                                --query "Reservations[].Instances[].PublicIpAddress" \
-                                --output text 
-                                """,
-                                returnStdout: true
-                            ).trim()
-
-                            sshagent([env.EC2_CREDENTIALS_ID]) {
-                                sh """
-                                ssh forge@${publicIp} \
-                                "set -e; \
-                                echo "Obteniendo la IP privada..."; \
-                                curl -s http://169.254.169.254/latest/meta-data/local-ipv4; \
-                                echo "Listando archivos en /home/forge..."; \
-                                cd /home/forge && ls -la"
-                                """
-                            }
-                        }
+                   /* sh """
+                    /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner/bin/sonar-scanner -Dsonar.projectKey=famiefi-api-utils -Dsonar.host.url=http://44.247.49.190:9002 -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork -X
+                    """*/
                     }
                 }
-                
             }
-            /*stage('Despliegue') {
-                steps {
-                    script {
-                        withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
-                           sshagent([env.EC2_CREDENTIALS_ID]) {
-                                sh """
-                                ssh forge@${publicIp} \
-                                "set -e; \
-                                cd /home/forge/calidad-v1-diggi-utils \
-                                git pull origin ${env.BRANCH_NAME}\
-                                cd /home/forge/calidad-v1-diggi-utils"
-                                """
-                            }
-                        }
-                    }
-                }
-                
-            }*/
+            
         }
         post {
             success {
@@ -140,9 +96,9 @@ def call() {
             failure {
                 echo " El despliegue falló"
             }   
-            /*always {
-                //cleanWs()
-            }*/
+            always {
+                cleanWs()
+            }
         }
     }
 }
