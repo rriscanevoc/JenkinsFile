@@ -62,7 +62,7 @@ def call() {
                         try{
                         withSonarQubeEnv('sonarqube') {
                             sh """
-                              ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=famiefi-api-utils -Dsonar.token=${SONAR_TOKEN} -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork -X
+                              ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=famiefi-api-utils -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork -X
                             """
 
                         /*    sh """
