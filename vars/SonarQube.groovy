@@ -58,12 +58,7 @@ def call() {
                         try{
 //                        withSonarQubeEnv('sonarqube') {
                             sh """
-                              ${scannerHome}/bin/sonar-scanner \ 
-                              -Dsonar.projectKey=famiefi-api-utils \
-                              -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb \
-                              -Dsonar.sources=app/ \
-                              -Dsonar.working.directory=.scannerwork \
-                              -X
+                              ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=famiefi-api-utils -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork -X
                             """
 
                         /*    sh """
