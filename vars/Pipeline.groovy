@@ -62,6 +62,8 @@ def call() {
                                 ''',
                                 returnStdout: true
                             ).trim()
+                            echo "Salida del comando AWS: ${publicIp}"
+
                             env.PUBLIC_IP = publicIp
                         }
                     }
