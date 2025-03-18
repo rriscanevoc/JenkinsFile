@@ -2,7 +2,9 @@ def call() {
     pipeline {
         agent any
         environment {
-        EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'  // ID de credenciales en Jenkins
+        EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'
+        PUBLIC_IP = ''
+
         }
         
         stages {
@@ -27,11 +29,8 @@ def call() {
             stage('Detectar archivos modificados') {
                 steps {
                     script {
-                        echo "🔍 Detectando cambios en el repositorio..."
-                        echo " ID PR : ${env.CHANGE_ID}"
                         echo "🌿 Rama actual: ${env.BRANCH_NAME}"
-                        echo "📌 Rama origen (PR): ${env.CHANGE_BRANCH}"
-                        echo "🎯 Rama destino (PR): ${env.CHANGE_TARGET}"
+
 
                         def changedFiles = sh(
                             script: "git diff --name-status HEAD~1 HEAD",
@@ -50,42 +49,6 @@ def call() {
                     }
                 }
             }
-            /*stage('SonarQube Analysis') {
-                steps {
-                    script {
-                    
-                        def scannerHome = tool 'sonarscanner'
-                        echo "-${scannerHome}-"
-                        echo "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonar-scanner"
-
-                        try{
-//                        withSonarQubeEnv('sonarqube') {
-                            sh """
-                              ${scannerHome}/bin/sonar-scanner \ 
-                              -Dsonar.projectKey=famiefi-api-utils \
-                              -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb \
-                              -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork \
-                              -X
-                            """
-
-                        /*    sh """
-                            /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner/bin/sonar-scanner \
-                                -Dsonar.projectKey=famiefi-api-utils \
-                                -Dsonar.host.url=http://44.247.49.190:9002 \
-                                -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb \
-                                -Dsonar.sources=app/ \
-                                -Dsonar.working.directory=.scannerwork \
-                                -X
-                           """
-                        
-//                        }
-                        } catch (Exception e) {
-                            echo "Se encontró error. Revisa antes de continuar."
-                            error("Pipeline detenido por exposición de credenciales.")
-                        }
-                    }
-                }
-            }*/
             stage('Conexión') {
                 steps {
                     script {
@@ -100,7 +63,15 @@ def call() {
                                 returnStdout: true
                             ).trim()
                             env.PUBLIC_IP = publicIp
+                        }
+                    }
+                }
+            }
 
+            stage('Despliegue') {
+                steps {
+                    script {
+                        
                             sshagent([env.EC2_CREDENTIALS_ID]) {
                                 sh '''
                                 ssh forge@$PUBLIC_IP \
@@ -111,7 +82,7 @@ def call() {
                                 cd /home/forge && ls -la"
                                 '''
                             }
-                        }
+                        
                     }
                 }
                 
@@ -142,9 +113,9 @@ def call() {
             failure {
                 echo " El despliegue falló"
             }   
-            /*always {
-                //cleanWs()
-            }*/
+            always {
+                cleanWs()
+            }
         }
     }
 }
