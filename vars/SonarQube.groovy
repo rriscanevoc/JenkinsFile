@@ -60,7 +60,7 @@ def call() {
                         echo "-/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner-"
 
                         try{
-//                        withSonarQubeEnv('sonarqube') {
+                        withSonarQubeEnv('sonarqube') {
                             sh """
                               ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=famiefi-api-utils -Dsonar.token=${SONAR_TOKEN} -Dsonar.sources=app/ -Dsonar.working.directory=.scannerwork -X
                             """
@@ -75,7 +75,7 @@ def call() {
                                 -X
                            """*/
                         
-//                        }
+                        }
                         } catch (Exception e) {
                             echo "Se encontró error. Revisa antes de continuar."
                             error("Pipeline detenido por exposición de credenciales.")
