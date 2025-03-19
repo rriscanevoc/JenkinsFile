@@ -64,6 +64,10 @@ def call() {
                             ).trim()
                             echo "Salida del comando AWS: ${publicIp}"
 
+                            withEnv(["PUBLIC_IP=${publicIp}"]) {
+                                sh 'echo "La IP pública obtenida es: $PUBLIC_IP"'
+                            }
+
                             env.PUBLIC_IP = publicIp
                         }
                     }
