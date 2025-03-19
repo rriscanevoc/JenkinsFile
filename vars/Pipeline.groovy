@@ -31,7 +31,6 @@ def call() {
                     script {
                         echo "🌿 Rama actual: ${env.BRANCH_NAME}"
 
-
                         def changedFiles = sh(
                             script: "git diff --name-status HEAD~1 HEAD",
                             returnStdout: true
@@ -53,51 +52,40 @@ def call() {
                 steps {
                     script {
                         withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
-                            def publicIp = sh(
-                                script: '''
-                                aws ec2 describe-instances --region $AWS_REGION \
-                                --instance-ids $INSTANCE_ID \
-                                --query "Reservations[].Instances[].PublicIpAddress" \
-                                --output text 
-                                ''',
-                                returnStdout: true
-                            ).trim()
-
-                            echo "Valor dentro de withCredentials: ${publicIp}"
+                            try{
+                                def publicIp = sh(
+                                    script: '''
+                                    aws ec2 describe-instances --region $AWS_REGION \
+                                    --instance-ids $INSTANCE_ID \
+                                    --query "Reservations[].Instances[].PublicIpAddress" \
+                                    --output text 
+                                    ''',
+                                    returnStdout: true
+                                ).trim()
+                            }catch (Exception e) {
+                            echo "Se encontraron problemas en ubicar la Ip del servidor."
+                            error("Pipeline detenido por error en conexión.")
                             
-                            sshagent([env.EC2_CREDENTIALS_ID]) {
-                                sh """
-                                ssh forge@${publicIp} \
-                                "set -e; \
-                                echo "Obteniendo la IP privada..."; \
-                                curl -s http://169.254.169.254/latest/meta-data/local-ipv4; \
-                                echo "Listando archivos en /home/forge..."; \
-                                cd /home/forge && ls -la"
-                                """
-                            }
-
+                            try{    
+                                sshagent([env.EC2_CREDENTIALS_ID]) {
+                                    sh """
+                                    ssh forge@${publicIp} \
+                                    "set -e; \
+                                    echo "Obteniendo la IP privada..."; \
+                                    curl -s http://169.254.169.254/latest/meta-data/local-ipv4; \
+                                    echo "Listando archivos en /home/forge..."; \
+                                    cd /home/forge && ls -la"
+                                    """
+                                }
+                            
+                            }catch (Exception e) {
+                            echo "Se encontraron problemas en el despliegue."
+                            error("Pipeline detenido por error en error en despliegue.")
+                        }          
                         }
                     }
                 }
             }
-            /*stage('Despliegue') {
-                steps {
-                    script {
-                        withCredentials([string(credentialsId: 'calidad-v1-diggi-utils', variable: 'INSTANCE_ID')]) {
-                           sshagent([env.EC2_CREDENTIALS_ID]) {
-                                sh """
-                                ssh forge@${publicIp} \
-                                "set -e; \
-                                cd /home/forge/calidad-v1-diggi-utils \
-                                git pull origin ${env.BRANCH_NAME}\
-                                cd /home/forge/calidad-v1-diggi-utils"
-                                """
-                            }
-                        }
-                    }
-                }
-                
-            }*/
         }
         post {
             success {
