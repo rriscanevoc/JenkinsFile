@@ -67,7 +67,7 @@ def call() {
                             
                             sshagent([env.EC2_CREDENTIALS_ID]) {
                                 sh """
-                                ssh forge@${env.PUBLIC_IP} \
+                                ssh forge@${publicIp} \
                                 "set -e; \
                                 echo "Obteniendo la IP privada..."; \
                                 curl -s http://169.254.169.254/latest/meta-data/local-ipv4; \
