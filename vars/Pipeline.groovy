@@ -78,7 +78,6 @@ def call() {
             stage('Despliegue') {
                 steps {
                     script {
-                        echo "IP pública para conectar: $PUBLIC_IP"
                         //withEnv(["PUBLIC_IP=${env.PUBLIC_IP}"]) {
                             sshagent([env.EC2_CREDENTIALS_ID]) {
                                 sh """
