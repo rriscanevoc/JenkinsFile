@@ -1,10 +1,6 @@
 def call() {
     pipeline {
         agent any
-
-        environment {
-            SONAR_TOKEN = credentials('Sonar')
-        }
         
         stages {
             stage('Checkout') {
@@ -29,11 +25,8 @@ def call() {
                 steps {
                     script {
                         echo "🔍 Detectando cambios en el repositorio..."
-                        echo " ID PR : ${env.CHANGE_ID}"
-                        echo "🌿 Rama actual: ${env.BRANCH_NAME}"
-                        echo "📌 Rama origen (PR): ${env.CHANGE_BRANCH}"
-                        echo "🎯 Rama destino (PR): ${env.CHANGE_TARGET}"
-
+                        echo "🌿 PR actual: ${env.BRANCH_NAME}"
+ 
                         def changedFiles = sh(
                             script: "git diff --name-status HEAD~1 HEAD",
                             returnStdout: true

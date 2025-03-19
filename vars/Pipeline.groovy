@@ -73,9 +73,10 @@ def call() {
             stage('Despliegue') {
                 steps {
                     script {
+                        withEnv(["PUBLIC_IP=${env.PUBLIC_IP}"]) {
                             sshagent([env.EC2_CREDENTIALS_ID]) {
                                 sh """
-                                ssh forge@${env.PUBLIC_IP} \
+                                ssh forge@$PUBLIC_IP \
                                 "set -e; \
                                 echo "Obteniendo la IP privada..."; \
                                 curl -s http://169.254.169.254/latest/meta-data/local-ipv4; \
@@ -83,6 +84,7 @@ def call() {
                                 cd /home/forge && ls -la"
                                 """
                             }
+                        }
                         
                     }
                 }
