@@ -68,8 +68,9 @@ def call() {
                                 sh 'echo "La IP pública obtenida es: $PUBLIC_IP"'
                             }
 
-                            env.PUBLIC_IP = publicIp
+                            
                         }
+                        env.PUBLIC_IP = publicIp
                     }
                 }
             }
