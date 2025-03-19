@@ -68,7 +68,7 @@ def call() {
                                 sh 'echo "La IP pública obtenida es: $PUBLIC_IP"'
                             }
                             env.PUBLIC_IP = publicIp
-                            echo "Valor dentro de withCredentials: ${env.PUBLIC_IP}"
+                            echo "Valor dentro de withCredentials: ${public}"
                             
                         }
                         echo "Valor de env.PUBLIC_IP después del bloque withCredentials: ${env.PUBLIC_IP}"
