@@ -71,6 +71,7 @@ def call() {
                             
                         }
                         env.PUBLIC_IP = publicIp
+                        echo "Valor de env.PUBLIC_IP después del bloque withCredentials: ${env.PUBLIC_IP}"
                     }
                 }
             }
