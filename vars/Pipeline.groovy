@@ -62,24 +62,9 @@ def call() {
                                 ''',
                                 returnStdout: true
                             ).trim()
-                            echo "Salida del comando AWS: ${publicIp}"
 
-                            withEnv(["PUBLIC_IP=${publicIp}"]) {
-                                sh 'echo "La IP pública obtenida es: $PUBLIC_IP"'
-                            }
-                            env.PUBLIC_IP = publicIp
                             echo "Valor dentro de withCredentials: ${publicIp}"
                             
-                        }
-                        echo "Valor de env.PUBLIC_IP después del bloque withCredentials: ${publicIp}"
-                    }
-                }
-            }
-
-            stage('Despliegue') {
-                steps {
-                    script {
-                        //withEnv(["PUBLIC_IP=${env.PUBLIC_IP}"]) {
                             sshagent([env.EC2_CREDENTIALS_ID]) {
                                 sh """
                                 ssh forge@${env.PUBLIC_IP} \
@@ -90,11 +75,10 @@ def call() {
                                 cd /home/forge && ls -la"
                                 """
                             }
-                        //}
-                        
+
+                        }
                     }
                 }
-                
             }
             /*stage('Despliegue') {
                 steps {
