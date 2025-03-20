@@ -53,8 +53,9 @@ def call() {
                 steps {
                     script {
                         withCredentials([string(credentialsId: env.Id_instance, variable: 'INSTANCE_ID')]) {
+                            def publicIp = ""
                             try{
-                                def publicIp = sh(
+                                publicIp = sh(
                                     script: '''
                                     aws ec2 describe-instances --region $AWS_REGION \
                                     --instance-ids $INSTANCE_ID \
