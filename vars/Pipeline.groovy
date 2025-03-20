@@ -63,6 +63,7 @@ def call() {
                                     ''',
                                     returnStdout: true
                                 ).trim()
+                                echo "IP ${publicIp}"
                             }catch (Exception e) {
                             echo "Se encontraron problemas en ubicar la Ip del servidor."
                             error("Pipeline detenido por error en conexión.")
