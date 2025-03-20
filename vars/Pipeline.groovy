@@ -68,7 +68,9 @@ def call() {
                             echo "Se encontraron problemas en ubicar la Ip del servidor."
                             error("Pipeline detenido por error en conexión.")
                             }
-                            echo "IP ${publicIp}"
+
+                            echo "IP2${publicIp}"
+                            
                             try{
   
                                 sshagent([env.EC2_CREDENTIALS_ID]) {
