@@ -69,7 +69,8 @@ def call() {
                             error("Pipeline detenido por error en conexión.")
                             }
 
-                            try{    
+                            try{
+                                echo "IP2 ${publicIp}"   
                                 sshagent([env.EC2_CREDENTIALS_ID]) {
                                     sh """
                                     ssh forge@${publicIp} \
