@@ -77,8 +77,9 @@ def call() {
   
                                 sshagent([env.EC2_CREDENTIALS_ID]) {
                                     sh """
-                                    ssh forge@${publicIp} \
-                                    "set -e;\
+                                    ssh forge@${publicIp}\
+                                    "set +x;\
+                                    set -e;\
                                     echo "Desplegando...";\
                                     cd /home/forge/calidad-v1-diggi-utils && git pull origin calidad-viejo;\
                                     php8.1 /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader;\
