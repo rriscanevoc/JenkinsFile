@@ -52,7 +52,7 @@ def call() {
             stage('Conexión') {
                 steps {
                     script {
-                        withCredentials([string(credentialsId: 'Id_instance', variable: 'INSTANCE_ID')]) {
+                        withCredentials([string(credentialsId: env.Id_instance, variable: 'INSTANCE_ID')]) {
                             try{
                                 def publicIp = sh(
                                     script: '''
@@ -67,7 +67,7 @@ def call() {
                             echo "Se encontraron problemas en ubicar la Ip del servidor."
                             error("Pipeline detenido por error en conexión.")
                             }
-                            
+
                             try{    
                                 sshagent([env.EC2_CREDENTIALS_ID]) {
                                     sh """
