@@ -78,15 +78,15 @@ def call() {
                                 sshagent([env.EC2_CREDENTIALS_ID]) {
                                     sh """
                                     ssh forge@${publicIp} \
-                                    "set -e; \
-                                    echo "Desplegando..."; \
-                                    cd /home/forge/calidad-v1-diggi-utils && git pull origin calidad-viejo; \
-                                    php8.1 /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader; \
-                                    ( flock -w 10 9 || exit 1; \
-                                        echo 'Restarting FPM...'; \
-                                        sudo -S service php8.1-fpm reload ) 9>/tmp/fpmlock; \
+                                    "set -e;\
+                                    echo "Desplegando...";\
+                                    cd /home/forge/calidad-v1-diggi-utils && git pull origin calidad-viejo;\
+                                    php8.1 /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader;\
+                                    ( flock -w 10 9 || exit 1;\
+                                        echo 'Restarting FPM...';\
+                                        sudo -S service php8.1-fpm reload ) 9>/tmp/fpmlock;\
 
-                                        if [ -f artisan ]; then php8.1 artisan migrate --force;fi; \
+                                        if [ -f artisan ]; then php8.1 artisan migrate --force;fi;\
                                     echo '✅ Despliegue completado exitosamente.'"           
                                     """
                                 }
