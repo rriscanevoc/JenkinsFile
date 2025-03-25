@@ -106,7 +106,7 @@ def call(Map config = [:]) {
             sshagent([EC2_CREDENTIALS_ID]) {
                 sh """
                     echo "📌 Comprimiendo archivos..."
-                    tar -czf build.tar.gz /home/ubuntu/comprimir/
+                    tar -czf build.tar.gz /var/lib/jenkins//comprimir/
                     
                     echo "📡 Transfiriendo build.tar.gz a la instancia ${publicIp}..."
                     scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/ubuntu/
