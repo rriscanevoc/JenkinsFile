@@ -101,15 +101,22 @@ def call(Map config = [:]) {
                             error("Pipeline detenido por error en error en despliegue.")
                             }
 
-                            sshagent([EC2_CREDENTIALS_ID]) {
-                                sshagent([EC2_CREDENTIALS_ID]) {
-                                sh """
-                                    tar -czf build.tar.gz /home/ubuntu/comprimir/
-                                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/ubuntu/
-                                    ssh forge@${publicIp} "echo 'Archivo recibido en la instancia de destino'"
-                                    """
-                                }
-                            }          
+                            
+                            script {
+            sshagent([EC2_CREDENTIALS_ID]) {
+                sh """
+                    echo "📌 Comprimiendo archivos..."
+                    tar -czf build.tar.gz /home/ubuntu/comprimir/
+                    
+                    echo "📡 Transfiriendo build.tar.gz a la instancia ${publicIp}..."
+                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/ubuntu/
+
+                    echo "✅ Verificando que el archivo fue recibido..."
+                    ssh forge@${publicIp} "ls -lh /home/ubuntu/build.tar.gz && echo '✔ Archivo recibido exitosamente'"
+                """
+            }
+        }
+                                      
                         }
                     }
                 }
