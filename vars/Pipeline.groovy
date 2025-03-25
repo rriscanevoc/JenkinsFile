@@ -1,7 +1,7 @@
 def call(Map config = [:]) {
 
-    def EC2_CREDENTIALS_ID  = config.EC2_CREDENTIALS_ID
-    def Id_instance = config.Id_instance
+    def EC2_CREDENTIALS_ID  = config.Ec2_credentials
+    def Id_instance = config.d_AWS
 
     pipeline {
         agent any
