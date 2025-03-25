@@ -1,15 +1,10 @@
-def call(Map config = [:]) {
-
-    def EC2_CREDENTIALS_ID  = config.credencialsEC2
-    def Id_instance = = config.id_AWS
-
+def call() {
     pipeline {
         agent any
         environment {
-            //EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'
-            //Id_instance = 'calidad-v1-diggi-utils'
+            EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'
+            Id_instance = 'calidad-v1-diggi-utils'
             FORGE_COMPOSER = 'php8.1 /usr/local/bin/composer'
-
             
         }
         
@@ -86,7 +81,7 @@ def call(Map config = [:]) {
                                     set -e;\
                                     echo "Desplegando...";\
                                     cd /home/forge/calidad-v1-diggi-utils && git pull origin calidad-viejo;\
-                                    ${env.FORGE_COMPOSER} install --no-dev --no-interaction --prefer-dist --optimize-autoloader;\
+                                    php8.1 /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader;\
                                     ( flock -w 10 9 || exit 1;\
                                         echo 'Restarting FPM...';\
                                         sudo -S service php8.1-fpm reload ) 9>/tmp/fpmlock;\
@@ -103,6 +98,13 @@ def call(Map config = [:]) {
                         }
                     }
                 }
+            }
+            stage{
+                sshagent([env.EC2_CREDENTIALS_ID]) {
+                        sh """
+                        scp -o StrictHostKeyChecking=no archivo_transferencia.txt forge@${publicIp}:/home/forge/calidad-v1-diggi-utils/
+                        """
+                    }
             }
         }
         post {

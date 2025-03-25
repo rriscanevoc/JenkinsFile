@@ -57,17 +57,6 @@ def call() {
                             sh """
                               ${scannerHome}/bin/sonar-scanner -Dsonar.working.directory=.scannerwork -X
                             """
-
-                        /*    sh """
-                            /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarscanner/bin/sonar-scanner \
-                                -Dsonar.projectKey=famiefi-api-utils \
-                                -Dsonar.host.url=http://44.247.49.190:9002 \
-                                -Dsonar.token=sqp_f425e7a673e249da66d856799b576a7dca6afccb \
-                                -Dsonar.sources=app/ \
-                                -Dsonar.working.directory=.scannerwork \
-                                -X
-                           """*/
-                        
                         }
                         } catch (Exception e) {
                             echo "Se encontró error. Revisa antes de continuar."
