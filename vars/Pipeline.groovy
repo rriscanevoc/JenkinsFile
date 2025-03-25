@@ -57,7 +57,7 @@ def call(Map config = [:]) {
             stage('Conexión') {
                 steps {
                     script {
-                        withCredentials([string(credentialsId: env.Id_instance, variable: 'INSTANCE_ID')]) {
+                        withCredentials([string(credentialsId: Id_instance, variable: 'INSTANCE_ID')]) {
                             def publicIp = ""
                             try{
                                 publicIp = sh(
@@ -79,7 +79,7 @@ def call(Map config = [:]) {
                             echo"${publicIp}"
 
                             try{
-                                sshagent([env.EC2_CREDENTIALS_ID]) {
+                                sshagent([EC2_CREDENTIALS_ID]) {
                                     sh """
                                     ssh forge@${publicIp}\
                                     "set +x;\
