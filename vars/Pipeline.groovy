@@ -109,7 +109,7 @@ def call(Map config = [:]) {
                     tar -czf build.tar.gz /var/lib/jenkins//comprimir/
                     
                     echo "📡 Transfiriendo build.tar.gz a la instancia ${publicIp}..."
-                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/ubuntu/
+                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/forge/
 
                     echo "✅ Verificando que el archivo fue recibido..."
                     ssh forge@${publicIp} "ls -lh /home/ubuntu/build.tar.gz && echo '✔ Archivo recibido exitosamente'"
