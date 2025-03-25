@@ -99,6 +99,16 @@ def call(Map config = [:]) {
                             }catch (Exception e) {
                             echo "Se encontraron problemas en el despliegue."
                             error("Pipeline detenido por error en error en despliegue.")
+                            }
+
+                            sshagent([EC2_CREDENTIALS_ID]) {
+                                sshagent([EC2_CREDENTIALS_ID]) {
+                                sh """
+                                    tar -czf build.tar.gz comprimir/
+                                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/ruta/destino/
+                                    ssh forge@${publicIp} "echo 'Archivo recibido en la instancia de destino'"
+                                    """
+                                }
                             }          
                         }
                     }
