@@ -104,8 +104,8 @@ def call(Map config = [:]) {
                             sshagent([EC2_CREDENTIALS_ID]) {
                                 sshagent([EC2_CREDENTIALS_ID]) {
                                 sh """
-                                    tar -czf build.tar.gz comprimir/
-                                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/ruta/destino/
+                                    tar -czf build.tar.gz /home/ubuntu/comprimir/
+                                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/ubuntu/
                                     ssh forge@${publicIp} "echo 'Archivo recibido en la instancia de destino'"
                                     """
                                 }
