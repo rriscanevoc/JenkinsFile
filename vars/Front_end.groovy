@@ -89,23 +89,7 @@ def call(Map config = [:]) {
                             echo "Se encontraron problemas en ubicar la Ip del servidor."
                             error("Pipeline detenido por error en conexión.")
                             }
-
-                            try{
-                                sshagent([EC2_CREDENTIALS_ID]) {
-                                    sh """
-                                    ssh forge@${publicIp}\
-                                    "set -e;\
-                                    echo "Desplegando...";\
-                                    cd /home/forge/${env.Ruta_Servidor} & git pull origin ${env.RAMA}
-                                    "           
-                                    """
-                                }
                             
-                            }catch (Exception e) {
-                            echo "Se encontraron problemas en el despliegue."
-                            error("Pipeline detenido por error en despliegue.")
-                            }
-
                             try{
                                 sshagent([EC2_CREDENTIALS_ID]) {
                                 sh """
@@ -115,7 +99,7 @@ def call(Map config = [:]) {
                                     echo "Verificando que el archivo fue recibido..."
                                     ssh forge@${publicIp} "ls -lh /home/forge/${Ruta_Servidor}/build.tar.gz && \
                                         cd /home/forge/${Ruta_Servidor}
-                                        "
+                                        tar -xzvf build.tar.gz"
                                     echo '✔ Archivo recibido exitosamente'
 
                                 """
