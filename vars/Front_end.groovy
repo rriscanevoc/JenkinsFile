@@ -2,7 +2,8 @@ def call(Map config = [:]) {
 
     def EC2_CREDENTIALS_ID  = config.Ec2_credentials    //Obtener credenciales de los parametros
     def Id_instance = config.Id_AWS                     
-    def Ruta_Servidor = config.Ruta
+    def Ruta_Servidor = config.Ruta             //Corregir
+    def command = config.command
 
     pipeline {
         agent any
@@ -97,7 +98,7 @@ def call(Map config = [:]) {
 
                                     echo "Verificando que el archivo fue recibido..."
                                     ssh forge@${publicIp} "cd /home/forge/${Ruta_Servidor} && \
-                                        tar -xzvf build.tar.gz -C build &&\
+                                        tar -xzvf build.tar.gz &&\
                                         rm -f build.tar.gz 
                                         "
                                     echo '✔ Archivo recibido exitosamente'
