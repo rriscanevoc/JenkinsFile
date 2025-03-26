@@ -1,14 +1,14 @@
 def call(Map config = [:]) {
 
-    def EC2_CREDENTIALS_ID  = config.Ec2_credentials    //Obtener credenciales de los parametros
-    def Id_instance = config.Id_AWS                     
-    def Ruta_Servidor = config.Ruta             //Corregir
-    def command = config.command
+    def EC2_CREDENTIALS_ID  = config.ec2_credentials    //Obtener credenciales de los parametros
+    def Id_instance = config.id_AWS                     
+    def Ruta_Servidor = config.path             //Corregir
+    def folder = config.folder
 
     pipeline {
         agent any
         environment {
-            RAMA = 'calidad-viejo'
+            RAMA = 'calidad'
         }
         stages {
             stage('Checkout') {
@@ -56,7 +56,7 @@ def call(Map config = [:]) {
                         try{
                             sh './scripts/build.sh'
                             echo "Comprimiendo archivos..."
-                            sh 'tar -czf build.tar.gz build/'
+                            sh "tar -czf ${folder}.tar.gz ${folder}/"
                             echo "Compilado y comprensión exitosa"
 
                         }
@@ -93,13 +93,12 @@ def call(Map config = [:]) {
                             try{
                                 sshagent([EC2_CREDENTIALS_ID]) {
                                 sh """
-                                    echo "📡 Transfiriendo build.tar.gz a la instancia ${publicIp}..."
-                                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/forge/${Ruta_Servidor}
+                                    echo "📡 Transfiriendo ${folder}.tar.gz a la instancia ${publicIp}..."
+                                    scp -o StrictHostKeyChecking=no ${folder}.tar.gz forge@${publicIp}:/home/forge/${Ruta_Servidor}
 
-                                    echo "Verificando que el archivo fue recibido..."
                                     ssh forge@${publicIp} "cd /home/forge/${Ruta_Servidor} && \
-                                        tar -xzvf build.tar.gz &&\
-                                        rm -f build.tar.gz 
+                                        tar -xzvf ${folder}.tar.gz &&\
+                                        rm -f ${folder}.tar.gz 
                                         "
                                     echo '✔ Archivo recibido exitosamente'
                                 """
