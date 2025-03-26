@@ -1,25 +1,26 @@
-def call() {
+ef call(Map config = [:]) {
+
+    def EC2_CREDENTIALS_ID  = config.Ec2_credentials    //Obtener credenciales de los parametros
+    def Id_instance = config.Id_AWS                     
+    def Ruta_Servidor = config.Ruta
+
     pipeline {
         agent any
         environment {
-            EC2_CREDENTIALS_ID = 'ec2-ssh-credential-utils'
-            Id_instance = 'calidad-v1-diggi-utils'
             FORGE_COMPOSER = 'php8.1 /usr/local/bin/composer'
-            
+            RAMA = 'calidad-viejo'
         }
-        
         stages {
             stage('Checkout') {
                 steps {
-                    checkout scm
+                    checkout scm                //Clonado repositorio
                 }
             }
-
             stage('Check Secrets') {
                 steps {
                     script {
                         try {
-                            sh 'git-secrets --scan'
+                            sh 'git-secrets --scan'     //Escaneo de exposición a credenciales
                         } catch (Exception e) {
                             echo "Se encontraron secretos en el código. Revisa antes de continuar."
                             error("Pipeline detenido por exposición de credenciales.")
@@ -30,7 +31,7 @@ def call() {
             stage('Detectar archivos modificados') {
                 steps {
                     script {
-                        echo "🌿 Rama actual: ${env.BRANCH_NAME}"
+                        echo "Rama actual: ${env.BRANCH_NAME}"
 
                         def changedFiles = sh(
                             script: "git diff --name-status HEAD~1 HEAD",
@@ -49,11 +50,30 @@ def call() {
                     }
                 }
             }
+            stage('Compilado'){
+                step {
+                    script {
+                        try{
+                            sh './scripts/build.sh'
+                            echo "Comprimiendo archivos..."
+                            sh 'tar -czf build.tar.gz build/'
+                            echo "Compilado y comprensión exitosa"
+
+                        }
+                        catch (Exception e) {
+                            echo "Se encontraron problemas con el compilado."
+                            error("Pipeline detenido por error en compilado.")
+                        }
+                        
+                    }
+                }
+            }
             stage('Conexión') {
                 steps {
                     script {
-                        withCredentials([string(credentialsId: env.Id_instance, variable: 'INSTANCE_ID')]) {
+                        withCredentials([string(credentialsId: Id_instance, variable: 'INSTANCE_ID')]) {
                             def publicIp = ""
+
                             try{
                                 publicIp = sh(
                                     script: '''
@@ -70,41 +90,45 @@ def call() {
                             error("Pipeline detenido por error en conexión.")
                             }
 
-                            echo "IP2"
-                            echo"${publicIp}"
-
                             try{
-                                sshagent([env.EC2_CREDENTIALS_ID]) {
+                                sshagent([EC2_CREDENTIALS_ID]) {
                                     sh """
                                     ssh forge@${publicIp}\
-                                    "set +x;\
-                                    set -e;\
+                                    "set -e;\
                                     echo "Desplegando...";\
-                                    cd /home/forge/calidad-v1-diggi-utils && git pull origin calidad-viejo;\
-                                    php8.1 /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader;\
-                                    ( flock -w 10 9 || exit 1;\
-                                        echo 'Restarting FPM...';\
-                                        sudo -S service php8.1-fpm reload ) 9>/tmp/fpmlock;\
-
-                                        if [ -f artisan ]; then php8.1 artisan migrate --force;fi;\
-                                    echo '✅ Despliegue completado exitosamente.'"           
+                                    cd /home/forge/${env.Ruta_Servidor} & git pull origin ${env.RAMA}
+                                    "           
                                     """
                                 }
                             
                             }catch (Exception e) {
                             echo "Se encontraron problemas en el despliegue."
-                            error("Pipeline detenido por error en error en despliegue.")
-                            }          
+                            error("Pipeline detenido por error en despliegue.")
+                            }
+
+                            try{
+                                sshagent([EC2_CREDENTIALS_ID]) {
+                                sh """
+                                    echo "📡 Transfiriendo build.tar.gz a la instancia ${publicIp}..."
+                                    scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/forge/${Ruta_Servidor}
+
+                                    echo "Verificando que el archivo fue recibido..."
+                                    ssh forge@${publicIp} "ls -lh /home/forge/${Ruta_Servidor}/build.tar.gz && \
+                                        cd /home/forge/${Ruta_Servidor} && \
+                                        tar -xzvf build.tar.gz"
+                                    echo '✔ Archivo recibido exitosamente'
+
+                                """
+                                }
+                            }
+                            catch (Exception e) {
+                            echo "Se encontraron problemas en la transferencia."
+                            error("Pipeline detenido por error en transferencia.")
+                            }
+                                      
                         }
                     }
                 }
-            }
-            stage{
-                sshagent([env.EC2_CREDENTIALS_ID]) {
-                        sh """
-                        scp -o StrictHostKeyChecking=no archivo_transferencia.txt forge@${publicIp}:/home/forge/calidad-v1-diggi-utils/
-                        """
-                    }
             }
         }
         post {
