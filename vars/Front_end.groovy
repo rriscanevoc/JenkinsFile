@@ -51,7 +51,7 @@ def call(Map config = [:]) {
                 }
             }
             stage('Compilado'){
-                step {
+                steps {
                     script {
                         try{
                             sh './scripts/build.sh'
