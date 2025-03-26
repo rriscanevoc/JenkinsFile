@@ -7,7 +7,6 @@ def call(Map config = [:]) {
     pipeline {
         agent any
         environment {
-            FORGE_COMPOSER = 'php8.1 /usr/local/bin/composer'
             RAMA = 'calidad-viejo'
         }
         stages {
@@ -97,8 +96,10 @@ def call(Map config = [:]) {
                                     scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/forge/${Ruta_Servidor}
 
                                     echo "Verificando que el archivo fue recibido..."
-                                    ssh forge@${publicIp} "cd /home/forge/${Ruta_Servidor} && \
-                                        tar -czf buildbackup.tar.gz build/"
+                                    ssh forge@${publicIp} "cd /home/forge/${Ruta_Servidor}/build && \
+                                        tar -xzvf build.tar.gz &&\
+                                        rm -f build.tar.gz 
+                                        "
                                     echo '✔ Archivo recibido exitosamente'
                                 """
                                 //tar -xzvf build.tar.gz"
