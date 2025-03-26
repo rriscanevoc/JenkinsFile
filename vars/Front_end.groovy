@@ -1,4 +1,4 @@
-ef call(Map config = [:]) {
+def call(Map config = [:]) {
 
     def EC2_CREDENTIALS_ID  = config.Ec2_credentials    //Obtener credenciales de los parametros
     def Id_instance = config.Id_AWS                     
