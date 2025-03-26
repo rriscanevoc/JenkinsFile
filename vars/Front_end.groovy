@@ -96,8 +96,8 @@ def call(Map config = [:]) {
                                     scp -o StrictHostKeyChecking=no build.tar.gz forge@${publicIp}:/home/forge/${Ruta_Servidor}
 
                                     echo "Verificando que el archivo fue recibido..."
-                                    ssh forge@${publicIp} "cd /home/forge/${Ruta_Servidor}/build && \
-                                        tar -xzvf build.tar.gz &&\
+                                    ssh forge@${publicIp} "cd /home/forge/${Ruta_Servidor} && \
+                                        tar -xzvf build.tar.gz -C build &&\
                                         rm -f build.tar.gz 
                                         "
                                     echo '✔ Archivo recibido exitosamente'
