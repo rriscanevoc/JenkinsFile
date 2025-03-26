@@ -99,7 +99,7 @@ def call(Map config = [:]) {
                                     echo "Verificando que el archivo fue recibido..."
                                     ssh forge@${publicIp} "ls -lh /home/forge/${Ruta_Servidor}/build.tar.gz && \
                                         cd /home/forge/${Ruta_Servidor}
-                                        tar -xzvf build.tar.gz"
+                                        "
                                     echo '✔ Archivo recibido exitosamente'
 
                                 """
